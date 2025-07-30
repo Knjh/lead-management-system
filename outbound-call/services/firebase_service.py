@@ -5,12 +5,8 @@ from typing import List, Dict, Any, Optional
 import logging
 from datetime import datetime, date, timedelta
 from config.settings import settings
-
-# --- Add this import ---
-import asyncio # For asyncio.to_thread (Python 3.9+) or run_in_executor
-# --- End of added import ---
-
-from models.lead_models import Lead, CallStatus # Adjust path as per your project structure
+import asyncio 
+from models.lead_models import Lead, CallStatus 
 
 class FirebaseService:
     def __init__(self):
@@ -130,7 +126,7 @@ class FirebaseService:
 
             batch = self.db.batch()
             created_lead_ids = []
-            updated_lead_ids = [] # To keep track of updated leads if that's the chosen strategy
+            updated_lead_ids = [] # To keep track of updated leads 
             skipped_leads_count = 0
             
             for lead in leads:
@@ -138,10 +134,11 @@ class FirebaseService:
                 existing_lead = await self.get_lead_by_phone_number(lead.phone_number)
 
                 if existing_lead:
-                    # OPTION 1: Skip (default for this example)
+                    # OPTION 1: Skip 
                     self.logger.info(f"Skipping lead with phone number {lead.phone_number} (ID: {existing_lead.id}) as it already exists.")
                     skipped_leads_count += 1
-                    # You might choose to update it instead:
+                    
+                    # OPTION 2: we might choose to update it instead:
                     # update_data = lead.model_dump(exclude={'id', 'created_at'}, exclude_none=True)
                     # update_data['updated_at'] = firestore.SERVER_TIMESTAMP
                     # batch.update(self.db.collection(self.LEADS_COLLECTION).document(existing_lead.id), update_data)
